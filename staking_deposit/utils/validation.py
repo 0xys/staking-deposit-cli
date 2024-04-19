@@ -134,6 +134,8 @@ def validate_eth1_withdrawal_address(cts: click.Context, param: Any, address: st
 
     normalized_address = to_normalized_address(address)
     click.echo('\n%s\n' % load_text(['msg_ECDSA_hex_addr_withdrawal']))
+    if normalized_address[:2] == '0x':
+        normalized_address = normalized_address[2:]
     return normalized_address
 
 #
