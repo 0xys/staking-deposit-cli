@@ -1,0 +1,24 @@
+{
+    "web3signer_deposit": {
+        "arg_web3signer_deposit": {
+            "help": "The number of new validator keys you want to generate (you can always generate more later)",
+            "prompt": "Please choose how many new validators you wish to run"
+        },
+        "arg_validator_pubkey": {
+            "help": "the 48-byte public key of the validator you want to deposit",
+            "prompt": "Please enter the 48-byte public key of the validator you want to deposit",
+            "confirm": "Repeat your public key for confirmation.",
+            "mismatch": "Error: the two entered values do not match. Please type again."
+        },
+        "arg_withdrawal_addr": {
+            "help": "The 20-byte (Eth1) withdrawal address that will be used in withdrawal",
+            "prompt": "Please enter the 20-byte Ethereum address for the new withdrawal credentials. Note that you CANNOT change it once you have set it on chain.",
+            "confirm": "Repeat your withdrawal address for confirmation.",
+            "mismatch": "Error: the two entered values do not match. Please type again."
+        },
+        "arg_chain": {
+            "help": "The name of Ethereum PoS chain you are targeting. Use \"mainnet\" if you are depositing ETH",
+            "prompt": "Please choose the (mainnet or testnet) network/chain name"
+        }
+    }
+}

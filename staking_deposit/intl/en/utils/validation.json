@@ -16,6 +16,11 @@
         "err_invalid_ECDSA_hex_addr_checksum": "The given Eth1 address is not in checksum form.",
         "msg_ECDSA_hex_addr_withdrawal": "**[Warning] you are setting an Eth1 address as your withdrawal address. Please ensure that you have control over this address.**"
     },
+    "validate_bls_validator_key": {
+        "err_invalid_hex_validator_key": "The given BLS public key is not in hexadecimal encoded form. And it must be 48-bytes.",
+        "err_invalid_wrong_length": "The given BLS public key is not of the correct length.",
+        "msg_validator_key": "**[Warning] you are setting Validator Public Key. **"
+    },
     "validate_bls_withdrawal_credentials": {
         "err_is_already_eth1_form": "The given withdrawal credentials is already in ETH1_ADDRESS_WITHDRAWAL_PREFIX form. Have you already set the EL (eth1) withdrawal addresss?",
         "err_not_bls_form": "The given withdrawal credentials is not in BLS_WITHDRAWAL_PREFIX form."
