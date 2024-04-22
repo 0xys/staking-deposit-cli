@@ -20,6 +20,7 @@ from staking_deposit.settings import (
     MAINNET,
     PRATER,
     BaseChainSetting,
+    DEPOSIT_CLI_VERSION,
     get_chain_setting,
     get_devnet_chain_setting,
 )
@@ -160,5 +161,12 @@ def web3signer_deposit(ctx: click.Context, validator_pubkey: str, withdrawal_add
         signature=signature,
     )
 
-    print(f"signed_deposit: {signed_deposit}")
+    datum_dict = signed_deposit.as_dict()
+    datum_dict.update({'deposit_message_root': deposit_msg.hash_tree_root})
+    datum_dict.update({'deposit_data_root': signed_deposit.hash_tree_root})
+    datum_dict.update({'fork_version': chain_setting.GENESIS_FORK_VERSION})
+    datum_dict.update({'network_name': chain_setting.NETWORK_NAME})
+    datum_dict.update({'deposit_cli_version': DEPOSIT_CLI_VERSION})
+
+    print(datum_dict)
     return
