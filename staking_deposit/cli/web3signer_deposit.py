@@ -19,6 +19,7 @@ from staking_deposit.settings import (
     ALL_CHAINS,
     MAINNET,
     PRATER,
+    BaseChainSetting,
     get_chain_setting,
     get_devnet_chain_setting,
 )
@@ -52,6 +53,35 @@ from staking_deposit.utils.ssz import (
     DepositMessage,
     SignedBLSToExecutionChange,
 )
+
+import http.client
+import json
+
+def sign(signing_root: bytes, deposit_msg: DepositMessage, chain: BaseChainSetting):
+    path = "localhost:9000"
+    conn = http.client.HTTPConnection(path)
+    headers = {'Content-Type': 'application/json'}
+    pubkey = deposit_msg['pubkey'].hex()
+    wc = deposit_msg['withdrawal_credentials'].hex()
+    data = {
+        'type': 'DEPOSIT',
+        'signingRoot': f'0x{signing_root.hex()}',
+        'deposit': {
+            'pubkey': f'0x{pubkey}',
+            'withdrawal_credentials': f'0x{wc}',
+            'amount': '32',
+            'genesis_fork_version': f'0x{chain.GENESIS_FORK_VERSION.hex()}',
+        }
+    }
+    path = f'/api/v1/eth2/sign/0x{pubkey}'
+    
+    # print(data)
+    conn.request("POST", path, json.dumps(data).encode('utf-8'), headers)
+
+    res = conn.getresponse()
+    content = res.read().decode('utf-8')
+    conn.close()
+    return content
 
 FUNC_NAME = 'web3signer_deposit'
 
@@ -123,7 +153,7 @@ def web3signer_deposit(ctx: click.Context, validator_pubkey: str, withdrawal_add
     signing_root = compute_signing_root(deposit_msg, domain)
 
     # call sign(DEPOSIT, signing_root, deposit_msg)
-    signature = '0xb3baa751d0a9132cfe93e4e3d5ff9075111100e3789dca219ade5a24d27e19d16b3353149da1833e9b691bb38634e8dc04469be7032132906c927d7e1a49b414730612877bc6b2810c8f202daf793d1ab0d6b5cb21d52f9e52e883859887a5d9'
+    signature = sign(signing_root, deposit_msg, chain_setting)
 
     signed_deposit = DepositData(
         **deposit_msg.as_dict(),
