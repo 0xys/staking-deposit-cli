@@ -80,7 +80,8 @@ FUNC_NAME = 'web3signer_deposit'
     callback=captive_prompt_callback(
         lambda pubkey: validate_bls_validator_key(None, None, pubkey),
         lambda: load_text(['arg_validator_pubkey', 'prompt'], func='web3signer_deposit'),
-        lambda: load_text(['arg_validator_pubkey', 'confirm'], func='web3signer_deposit'),
+        # lambda: load_text(['arg_validator_pubkey', 'confirm'], func='web3signer_deposit'),
+        None,
         lambda: load_text(['arg_validator_pubkey', 'mismatch'], func='web3signer_deposit'),
     ),
     help=lambda: load_text(['arg_validator_pubkey', 'help'], func='web3signer_deposit'),
@@ -91,23 +92,23 @@ FUNC_NAME = 'web3signer_deposit'
     callback=captive_prompt_callback(
         lambda address: validate_eth1_withdrawal_address(None, None, address),
         lambda: load_text(['arg_withdrawal_addr', 'prompt'], func='web3signer_deposit'),
-        lambda: load_text(['arg_withdrawal_addr', 'confirm'], func='web3signer_deposit'),
+        # lambda: load_text(['arg_withdrawal_addr', 'confirm'], func='web3signer_deposit'),
+        None,
         lambda: load_text(['arg_withdrawal_addr', 'mismatch'], func='web3signer_deposit'),
     ),
     help=lambda: load_text(['arg_withdrawal_addr', 'help'], func='web3signer_deposit'),
-    param_decls=['--withdrawal_addr', '--eth1_withdrawal_address'],
+    param_decls=['--withdrawal-addr', '--eth1-withdrawal-address'],
     prompt=lambda: load_text(['arg_withdrawal_addr', 'prompt'], func='web3signer_deposit'),
 )
-# @click.option('--validator_pubkey', type=str, help=load_text(['arg_validator_pubkey', 'help'], func='web3signer_deposit'))
 @click.pass_context
 def web3signer_deposit(ctx: click.Context, validator_pubkey: str, withdrawal_addr: str, chain: str, **kwargs: Any) -> None:
-    print(f"validator_pubkey: {validator_pubkey}")
+    print(f"validator-pubkey: {validator_pubkey}")
     validator_pubkey = bytes.fromhex(validator_pubkey)
 
-    print(f"withdrawal_addr: {withdrawal_addr}")
+    print(f"withdrawal-addr: {withdrawal_addr}")
     withdrawal_addr = bytes.fromhex(withdrawal_addr)
 
-    print(f"chain_setting: {chain}")
+    print(f"chain-setting: {chain}")
     chain_setting = get_chain_setting(chain)
 
     withdrawal_credentials = ETH1_ADDRESS_WITHDRAWAL_PREFIX
