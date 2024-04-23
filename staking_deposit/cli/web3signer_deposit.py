@@ -90,10 +90,9 @@ def export(folder: str, datum_dict: dict):
     if not os.path.exists(folder):
         os.mkdir(folder)
     
-    pubkey = datum_dict['pubkey'].hex()
-    file_folder = os.path.join(folder, f'web3signer-deposit-0x{pubkey}-{time.time()}.json')
+    file_folder = os.path.join(folder, f'deposit_data-{time.time()}.json')
     with open(file_folder, 'w') as f:
-        json.dump(datum_dict, f, default=lambda x: x.hex())
+        json.dump([datum_dict], f, default=lambda x: x.hex())
     if os.name == 'posix':
         os.chmod(file_folder, int('440', 8))  # Read for owner & group
 
@@ -197,7 +196,7 @@ def web3signer_deposit(ctx: click.Context, endpoint: str, validator_pubkey: str,
     datum_dict.update({'network_name': chain_setting.NETWORK_NAME})
     datum_dict.update({'deposit_cli_version': DEPOSIT_CLI_VERSION})
 
-    print(json.dump(datum_dict, sys.stdout ,default=lambda x: x.hex()))
+    print(json.dump([datum_dict], sys.stdout ,default=lambda x: x.hex()))
 
     export(folder, datum_dict)
 
