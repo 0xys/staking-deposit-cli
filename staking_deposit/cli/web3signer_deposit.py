@@ -62,10 +62,14 @@ def sign(endpoint: str, signing_root: bytes, deposit_msg: DepositMessage, chain:
     }
     path = f'/api/v1/eth2/sign/0x{pubkey}'
     
-    # print(data)
     conn.request("POST", path, json.dumps(data).encode('utf-8'), headers)
 
     res = conn.getresponse()
+    if res.status != 200:
+        print(data)
+        print(f"Error: {res.status} {res.reason}")
+        return None
+    
     content = res.read().decode('utf-8')
     print(content)
 
@@ -153,6 +157,9 @@ def web3signer_deposit(ctx: click.Context, endpoint: str, validator_pubkey: str,
     # call sign(DEPOSIT, signing_root, deposit_msg)
     # signature = bytes.fromhex('b3baa751d0a9132cfe93e4e3d5ff9075111100e3789dca219ade5a24d27e19d16b3353149da1833e9b691bb38634e8dc04469be7032132906c927d7e1a49b414730612877bc6b2810c8f202daf793d1ab0d6b5cb21d52f9e52e883859887a5d9')
     signature = sign(endpoint, signing_root, deposit_msg, chain_setting)
+    if signature is None:
+        print("Failed to sign the deposit message.")
+        return
 
     signed_deposit = DepositData(
         **deposit_msg.as_dict(),
