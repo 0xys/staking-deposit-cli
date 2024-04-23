@@ -138,6 +138,14 @@ def validate_eth1_withdrawal_address(cts: click.Context, param: Any, address: st
         normalized_address = normalized_address[2:]
     return normalized_address
 
+def validate_web3signer_endpoint(cts: click.Context, param: Any, endpoint: str) -> str:
+    if endpoint is None:
+        return None
+    if not re.match(r'^[a-zA-Z0-9.-]+:[0-9]+$', endpoint):
+        raise ValidationError(load_text(['err_invalid_web3signer_endpoint']))
+    click.echo(f'\nyour endpoint is "{endpoint}"\n')
+    return endpoint
+
 #
 # BLSToExecutionChange
 #

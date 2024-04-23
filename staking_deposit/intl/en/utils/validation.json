@@ -16,6 +16,10 @@
         "err_invalid_ECDSA_hex_addr_checksum": "The given Eth1 address is not in checksum form.",
         "msg_ECDSA_hex_addr_withdrawal": "**[Warning] you are setting an Eth1 address as your withdrawal address. Please ensure that you have control over this address.**"
     },
+    "validate_web3signer_endpoint": {
+        "err_invalid_web3signer_endpoint": "The given Web3Signer endpoint is not a valid URL. Please retype.",
+        "msg_web3signer_endpoint": "not used"
+    },
     "validate_bls_validator_key": {
         "err_invalid_hex_validator_key": "The given BLS public key is not in hexadecimal encoded form. And it must be 48-bytes.",
         "err_invalid_wrong_length": "The given BLS public key is not of the correct length.",

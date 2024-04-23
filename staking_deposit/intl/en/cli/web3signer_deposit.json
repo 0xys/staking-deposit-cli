@@ -4,6 +4,12 @@
             "help": "The number of new validator keys you want to generate (you can always generate more later)",
             "prompt": "Please choose how many new validators you wish to run"
         },
+        "arg_endpoint": {
+            "help": "web3signer endpoint (default: localhost:9000)",
+            "prompt": "web3signer endpoint <hostname>:<port> (no http:// prefix)",
+            "confirm": "Repeat endpoint for confirmation.",
+            "mismatch": "Error: the two entered values do not match. Please type again."
+        },
         "arg_validator_pubkey": {
             "help": "the 48-byte public key of the validator you want to deposit",
             "prompt": "Please enter the 48-byte public key of the validator you want to deposit",
