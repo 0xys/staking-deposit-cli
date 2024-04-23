@@ -1,3 +1,7 @@
+import os
+import sys
+import time
+
 import click
 from typing import (
     Any,
@@ -20,6 +24,7 @@ from staking_deposit.utils.constants import (
     ETH1_ADDRESS_WITHDRAWAL_PREFIX,
     WORD_LISTS_PATH,
     ETH2GWEI,
+    DEFAULT_VALIDATOR_KEYS_FOLDER_NAME,
 )
 from staking_deposit.utils.click import (
     captive_prompt_callback,
@@ -80,11 +85,29 @@ def sign(endpoint: str, signing_root: bytes, deposit_msg: DepositMessage, chain:
     conn.close()
     return bytes.fromhex(content)
 
+def export(folder: str, datum_dict: dict):
+    folder = os.path.join(folder, DEFAULT_VALIDATOR_KEYS_FOLDER_NAME)
+    if not os.path.exists(folder):
+        os.mkdir(folder)
+    
+    pubkey = datum_dict['pubkey'].hex()
+    file_folder = os.path.join(folder, f'web3signer-deposit-0x{pubkey}-{time.time()}.json')
+    with open(file_folder, 'w') as f:
+        json.dump(datum_dict, f, default=lambda x: x.hex())
+    if os.name == 'posix':
+        os.chmod(file_folder, int('440', 8))  # Read for owner & group
+
 FUNC_NAME = 'web3signer_deposit'
 
 
 @click.command(
     help=load_text(['arg_web3signer_deposit', 'help'], func=FUNC_NAME),
+)
+@jit_option(
+    default=os.getcwd(),
+    help=lambda: load_text(['folder', 'help'], func=FUNC_NAME),
+    param_decls='--folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @jit_option(
     callback=captive_prompt_callback(
@@ -134,7 +157,7 @@ FUNC_NAME = 'web3signer_deposit'
     prompt=lambda: load_text(['arg_withdrawal_addr', 'prompt'], func=FUNC_NAME),
 )
 @click.pass_context
-def web3signer_deposit(ctx: click.Context, endpoint: str, validator_pubkey: str, withdrawal_addr: str, chain: str, **kwargs: Any) -> None:
+def web3signer_deposit(ctx: click.Context, endpoint: str, validator_pubkey: str, withdrawal_addr: str, chain: str, folder: str, **kwargs: Any) -> None:
     print(f"validator-pubkey: {validator_pubkey}")
     validator_pubkey = bytes.fromhex(validator_pubkey)
 
@@ -174,5 +197,8 @@ def web3signer_deposit(ctx: click.Context, endpoint: str, validator_pubkey: str,
     datum_dict.update({'network_name': chain_setting.NETWORK_NAME})
     datum_dict.update({'deposit_cli_version': DEPOSIT_CLI_VERSION})
 
-    print(datum_dict)
+    print(json.dump(datum_dict, sys.stdout ,default=lambda x: x.hex()))
+
+    export(folder, datum_dict)
+
     return
