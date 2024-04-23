@@ -56,7 +56,7 @@ def sign(endpoint: str, signing_root: bytes, deposit_msg: DepositMessage, chain:
         'deposit': {
             'pubkey': f'0x{pubkey}',
             'withdrawal_credentials': f'0x{wc}',
-            'amount': '32',
+            'amount': '32000000000',
             'genesis_fork_version': f'0x{chain.GENESIS_FORK_VERSION.hex()}',
         }
     }
@@ -66,6 +66,7 @@ def sign(endpoint: str, signing_root: bytes, deposit_msg: DepositMessage, chain:
 
     res = conn.getresponse()
     if res.status != 200:
+        print(path)
         print(data)
         print(f"Error: {res.status} {res.reason}")
         return None
