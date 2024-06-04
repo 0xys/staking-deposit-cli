@@ -134,11 +134,49 @@ def validate_eth1_withdrawal_address(cts: click.Context, param: Any, address: st
 
     normalized_address = to_normalized_address(address)
     click.echo('\n%s\n' % load_text(['msg_ECDSA_hex_addr_withdrawal']))
+    if normalized_address[:2] == '0x':
+        normalized_address = normalized_address[2:]
     return normalized_address
+
+def validate_web3signer_endpoint(cts: click.Context, param: Any, endpoint: str) -> str:
+    if endpoint is None:
+        return None
+    if not re.match(r'^[a-zA-Z0-9.-]+:[0-9]+$', endpoint):
+        raise ValidationError(load_text(['err_invalid_web3signer_endpoint']))
+    click.echo(f'\nyour endpoint is "{endpoint}"\n')
+    return endpoint
 
 #
 # BLSToExecutionChange
 #
+def validate_bls_validator_key(cts: click.Context, param: Any, pubkey: str) -> str:
+    if pubkey is None:
+        return None
+    if not is_hex_validator_key(pubkey):
+        raise ValidationError(load_text(['err_invalid_hex_validator_key']) + '\n')
+    
+    if pubkey[:2] == '0x':
+        pubkey = pubkey[2:]
+    
+    try:
+        key_bytes = bytes.fromhex(pubkey)
+    except Exception:
+        raise ValidationError(load_text(['err_invalid_hex_validator_key']) + '\n')
+    if len(key_bytes) != 48:
+        raise ValidationError(load_text(['err_invalid_wrong_length']) + '\n')
+    click.echo('\n%s\n' % load_text(['msg_validator_key']))
+    return pubkey
+
+text_types = (str,)
+_HEX_VALIDATOR_KEY = re.compile("(0x)?[0-9a-f]{96}", re.IGNORECASE | re.ASCII)
+
+def is_hex_validator_key(value: Any) -> bool:
+    """
+    Checks if the given string of text type is an address in hexadecimal encoded form.
+    """
+    if not isinstance(value, text_types):
+        return False
+    return _HEX_VALIDATOR_KEY.fullmatch(value) is not None
 
 
 def verify_bls_to_execution_change_json(filefolder: str,
